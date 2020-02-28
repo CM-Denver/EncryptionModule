@@ -16,6 +16,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class SHA256 {
@@ -35,6 +36,23 @@ public class SHA256 {
 		PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(privKey));
 		
 		return privateKey;
+	}
+	
+	public static void storePublicKey(PublicKey publicKey, String textFile) throws IOException {
+		byte[] publicKeybytes = publicKey.getEncoded();
+		
+		File newFile = new File(textFile + "Pub.txt");
+		FileOutputStream fop = new FileOutputStream(newFile);
+		fop.write(publicKeybytes);
+		fop.close();
+	}
+	
+	public static PublicKey getPublicKey(String textFile) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		Path file = Paths.get(textFile + "Pub.txt");
+		byte[] pubKey = Files.readAllBytes(file);
+		PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pubKey));
+		
+		return publicKey;
 	}
 	
 	public static KeyPair generateKeyPair(int bits) throws Exception {
